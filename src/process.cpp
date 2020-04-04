@@ -11,10 +11,14 @@ using std::to_string;
 using std::vector;
 
 // TODO: Return this process's ID
-int Process::Pid() { return 0; }
+int Process::Pid() { return pid_; }
+
+void Process::Pid(int pid) { pid_ = pid; }
 
 // TODO: Return this process's CPU utilization
 float Process::CpuUtilization() { return 0; }
+
+void Process::CpuUtilization(float cpu) { cpu_ = cpu; }
 
 // TODO: Return the command that generated this process
 string Process::Command() { return string(); }
@@ -28,7 +32,9 @@ string Process::User() { return user_; }
 void Process::User(std::string user) { user_ = user; }
 
 // TODO: Return the age of this process (in seconds)
-long int Process::UpTime() { return 0; }
+long int Process::UpTime() { return uptime_; }
+
+void Process::UpTime(long int uptime) { uptime_ = uptime; };
 
 // TODO: Overload the "less than" comparison operator for Process objects
 // REMOVE: [[maybe_unused]] once you define the function

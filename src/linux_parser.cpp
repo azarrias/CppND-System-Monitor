@@ -106,7 +106,29 @@ long LinuxParser::Jiffies() { return 0; }
 
 // TODO: Read and return the number of active jiffies for a PID
 // REMOVE: [[maybe_unused]] once you define the function
-long LinuxParser::ActiveJiffies(int pid[[maybe_unused]]) { return 0; }
+long LinuxParser::ActiveJiffies(int pid) { 
+  long utime = 0, stime = 0, cutime = 0, cstime = 0; 
+  string measure;
+  string line;
+  std::ifstream stream(kProcDirectory + to_string(pid) + kStatFilename);
+  if (stream.is_open()) {
+    std::getline(stream, line);
+    std::istringstream linestream(line);
+    // discard the first 13 values of the line
+    for (int i=0; i<13; ++i) {
+      linestream >> measure;
+    }
+    if(linestream >> measure) // 14 utime
+      utime = stol(measure);
+    if(linestream >> measure) // 15 stime
+      stime = stol(measure);
+    if(linestream >> measure) // 16 cutime
+      cutime = stol(measure);
+    if(linestream >> measure) // 17 cstime
+      cstime = stol(measure);
+  }
+  return utime + stime + cutime + cstime; 
+}
 
 // TODO: Read and return the number of active jiffies for the system
 long LinuxParser::ActiveJiffies() { return 0; }
@@ -220,4 +242,22 @@ string LinuxParser::User(int pid) {
 
 // TODO: Read and return the uptime of a process
 // REMOVE: [[maybe_unused]] once you define the function
-long LinuxParser::UpTime(int pid[[maybe_unused]]) { return 0; }
+long LinuxParser::UpTime(int pid) { 
+  long sysuptime = LinuxParser::UpTime();
+  long starttime = 0; 
+  string measure;
+  string line;
+  std::ifstream stream(kProcDirectory + to_string(pid) + kStatFilename);
+  if (stream.is_open()) {
+    std::getline(stream, line);
+    std::istringstream linestream(line);
+    // discard the first 21 values of the line
+    for (int i=0; i<21; ++i) {
+      linestream >> measure;
+    }
+    if(linestream >> measure) // 22 starttime
+      starttime = stol(measure);
+  }
+  // convert starttime from clock ticks to seconds and calculate
+  return sysuptime - (double)starttime / sysconf(_SC_CLK_TCK);
+}

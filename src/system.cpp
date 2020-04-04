@@ -25,10 +25,15 @@ Processor& System::Cpu() { return cpu_; }
 // TODO: Return a container composed of the system's processes
 vector<Process>& System::Processes() { 
     vector<int> pids = LinuxParser::Pids();
+    processes_.clear();
     for (int pid : pids) {
         Process p;
+        p.Pid(pid);
         p.User(LinuxParser::User(pid));
-        
+        p.UpTime(LinuxParser::UpTime(pid));
+        // convert process clock ticks to seconds and calculate
+        p.CpuUtilization((double)LinuxParser::ActiveJiffies(pid) / sysconf(_SC_CLK_TCK) / p.UpTime());
+
         processes_.push_back(p);
     }
     return processes_; 
