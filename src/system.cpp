@@ -36,6 +36,11 @@ vector<Process>& System::Processes() {
 
         processes_.push_back(p);
     }
+    std::sort(processes_.begin(), processes_.end(), 
+        [](const Process &a, const Process &b) {
+            return a.CpuUtilization() < b.CpuUtilization();
+        });
+    std::reverse(processes_.begin(), processes_.end());
     return processes_; 
 }
 
