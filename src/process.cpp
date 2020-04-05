@@ -22,7 +22,8 @@ void Process::CpuUtilization(float cpu) { cpu_ = cpu; }
 string Process::Command() { return string(); }
 
 // TODO: Return this process's memory utilization
-string Process::Ram() { return string(); }
+string Process::Ram() const { return mem_; }
+void Process::Ram(string mem) { mem_ = mem; }
 
 // TODO: Return the user (name) that generated this process
 string Process::User() const { return user_; }
