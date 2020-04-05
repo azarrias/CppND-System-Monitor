@@ -3,6 +3,7 @@
 #include <string>
 #include <thread>
 #include <vector>
+#include <iomanip>
 
 #include "format.h"
 #include "ncurses_display.h"
@@ -56,27 +57,29 @@ void NCursesDisplay::DisplayProcesses(std::vector<Process>& processes,
                                       WINDOW* window, int n) {
   int row{0};
   int const pid_column{2};
-  int const user_column{9};
-  int const cpu_column{16};
-  int const ram_column{26};
-  int const time_column{35};
-  int const command_column{54};  //had to move it to the right to display days
+  int const user_column{10};     //had to move it to the right for long pids
+  int const cpu_column{20};     //had to move it to the right for long user names
+  int const ram_column{27};
+  int const time_column{37};
+  int const command_column{56};  //had to move it to the right to display days
   wattron(window, COLOR_PAIR(2));
   mvwprintw(window, ++row, pid_column, "PID");
   mvwprintw(window, row, user_column, "USER");
   mvwprintw(window, row, cpu_column, "CPU[%%]");
-  mvwprintw(window, row, ram_column, "RAM[MB]");
+  mvwprintw(window, row, ram_column + 1, "RAM[MB]");
   mvwprintw(window, row, time_column, "TIME+");
   mvwprintw(window, row, command_column, "COMMAND");
   wattroff(window, COLOR_PAIR(2));
   for (int i = 0; i < n; ++i) {
-    mvwprintw(window, ++row, pid_column, to_string(processes[i].Pid()).c_str());
-    mvwprintw(window, row, user_column, processes[i].User().c_str());
+    mvwprintw(window, ++row, pid_column, rpad(to_string(processes[i].Pid()), user_column - pid_column - 1).c_str());
+    mvwprintw(window, row, user_column, rpad(processes[i].User(), cpu_column - user_column - 1).c_str());
     float cpu = processes[i].CpuUtilization() * 100;
-    mvwprintw(window, row, cpu_column, to_string(cpu).substr(0, 4).c_str());
-    mvwprintw(window, row, ram_column, processes[i].Ram().c_str());
+    std::ostringstream oss;
+    oss << std::setprecision(2) << std::fixed << cpu;
+    mvwprintw(window, row, cpu_column, lpad(oss.str(), ram_column - cpu_column - 2).c_str());
+    mvwprintw(window, row, ram_column, lpad(processes[i].Ram(), time_column - ram_column - 2).c_str());
     mvwprintw(window, row, time_column,
-              Format::ElapsedTime(processes[i].UpTime()).c_str());
+              rpad(Format::ElapsedTime(processes[i].UpTime()), command_column - time_column).c_str());
     mvwprintw(window, row, command_column,
               processes[i].Command().substr(0, window->_maxx - 46).c_str());
   }
@@ -106,4 +109,17 @@ void NCursesDisplay::Display(System& system, int n) {
     std::this_thread::sleep_for(std::chrono::seconds(1));
   }
   endwin();
+}
+
+// Add these functions to avoid leftovers from previous values
+string NCursesDisplay::lpad(const string &str, int padded_length, char pad_char) {
+  string str2(str.substr(0, padded_length));
+  str2.insert(str2.begin(), padded_length - str2.length(), pad_char);
+  return str2;
+}
+
+string NCursesDisplay::rpad(const string &str, int padded_length, char pad_char) {
+  string str2(str.substr(0, padded_length));
+  str2.append(padded_length - str2.length(), pad_char);
+  return str2;
 }
