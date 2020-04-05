@@ -44,12 +44,11 @@ void NCursesDisplay::DisplaySystem(System& system, WINDOW* window) {
   wprintw(window, ProgressBar(system.MemoryUtilization()).c_str());
   wattroff(window, COLOR_PAIR(1));
   mvwprintw(window, ++row, 2,
-            ("Total Processes: " + to_string(system.TotalProcesses())).c_str());
-  mvwprintw(
-      window, ++row, 2,
-      ("Running Processes: " + to_string(system.RunningProcesses())).c_str());
+      rpad("Total Processes: " + to_string(system.TotalProcesses()), window->_maxx - 3).c_str());
   mvwprintw(window, ++row, 2,
-            ("Up Time: " + Format::ElapsedTime(system.UpTime())).c_str());
+      rpad("Running Processes: " + to_string(system.RunningProcesses()), window->_maxx - 3).c_str());
+  mvwprintw(window, ++row, 2,
+      rpad("Up Time: " + Format::ElapsedTime(system.UpTime()), window->_maxx - 3).c_str());
   wrefresh(window);
 }
 
