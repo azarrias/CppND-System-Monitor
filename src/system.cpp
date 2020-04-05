@@ -34,6 +34,7 @@ vector<Process>& System::Processes() {
         // convert process clock ticks to seconds and calculate
         p.CpuUtilization((double)LinuxParser::ActiveJiffies(pid) / sysconf(_SC_CLK_TCK) / p.UpTime());
         p.Ram(LinuxParser::Ram(pid));
+        p.Command(LinuxParser::Command(pid));
 
         processes_.push_back(p);
     }

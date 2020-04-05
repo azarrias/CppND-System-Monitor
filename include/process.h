@@ -12,7 +12,8 @@ class Process {
   void Pid(int);
   std::string User() const;                      // TODO: See src/process.cpp
   void User(std::string);
-  std::string Command();                   // TODO: See src/process.cpp
+  std::string Command() const;                   // TODO: See src/process.cpp
+  void Command(std::string);
   float CpuUtilization() const;                  // TODO: See src/process.cpp
   void CpuUtilization(float);
   std::string Ram() const;                       // TODO: See src/process.cpp
@@ -28,6 +29,7 @@ class Process {
   long int uptime_;
   float cpu_;
   std::string mem_;
+  std::string command_;
 };
 
 #endif

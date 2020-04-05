@@ -19,7 +19,8 @@ float Process::CpuUtilization() const { return cpu_; }
 void Process::CpuUtilization(float cpu) { cpu_ = cpu; }
 
 // TODO: Return the command that generated this process
-string Process::Command() { return string(); }
+string Process::Command() const { return command_; }
+void Process::Command(string command) { command_ = command; }
 
 // TODO: Return this process's memory utilization
 string Process::Ram() const { return mem_; }
