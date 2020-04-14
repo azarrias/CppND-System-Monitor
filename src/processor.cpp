@@ -4,7 +4,7 @@
 #include "linux_parser.h"
 
 // TODO: Return the aggregate CPU utilization
-float Processor::Utilization() { 
+double Processor::Utilization() { 
     std::vector<std::string> data = LinuxParser::CpuUtilization();
     int previous_idle = idle_;
     int previous_non_idle = non_idle_;
@@ -26,5 +26,5 @@ float Processor::Utilization() {
     int delta_total = total - previous_total;
     int delta_idle = idle_ - previous_idle;
 
-    return (float)(delta_total - delta_idle) / delta_total; 
+    return (double)(delta_total - delta_idle) / delta_total; 
 }
