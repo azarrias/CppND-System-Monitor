@@ -36,7 +36,7 @@ vector<Process>& System::Processes() {
         p.Ram(LinuxParser::Ram(pid));
         p.Command(LinuxParser::Command(pid));
 
-        processes_.push_back(p);
+        processes_.emplace_back(p);
     }
     std::sort(processes_.begin(), processes_.end(), 
         [](const Process &a, const Process &b) {
